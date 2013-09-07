@@ -1,0 +1,29 @@
+<module>
+	<rawname>digiumaddoninstaller</rawname>
+	<repo>standard</repo>
+	<type>setup</type>
+	<category>Admin</category>
+	<name>Digium Addons</name>
+	<version>2.11.0.1</version>
+	<publisher>Schmoozecom.com</publisher>
+	<license>GPLv2</license>
+	<candisable>yes</candisable>
+	<canuninstall>yes</canuninstall>
+	<changelog>
+		*2.11.0.1* FreePBX/Schmoozecom Release
+		*0.1* initial commit
+	</changelog>
+	<depends>
+		<version>2.8.0</version>
+	</depends>
+	<requirements>
+		<file>/usr/sbin/astersk</file>
+		<folder>/var/lib/digium/licenses/</folder>
+		<folder>/var/lib/asterisk/licenses/</folder>
+	</requirements>
+	<menuitems>
+		<digiumaddons needsenginedb="yes" sort="-4">Digium Addons</digiumaddons>
+	</menuitems>
+	<location>release/2.11/digiumaddoninstaller-2.11.0.1.tgz</location>
+	<md5sum>264abee1f7734ed657674217df5b83a7</md5sum>
+</module>
