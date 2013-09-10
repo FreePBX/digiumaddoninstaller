@@ -19,7 +19,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-if(function_exists('dl')) {
+if(!extension_loaded('digium_register') && function_exists('dl')) {
+	if (strtolower(substr(PHP_OS, 0, 3)) === 'win') {
+		if (!dl('php_digium_register.dll')) return;
+	} else {
+		// PHP_SHLIB_SUFFIX gives 'dylib' on MacOS X but modules are 'so'.
+		if (PHP_SHLIB_SUFFIX === 'dylib') {
+			if (!dl('digium_register.so')) return;
+		} else {
+			if (!dl('digium_register.'.PHP_SHLIB_SUFFIX)) return;
+		}
+	}
+}
+if (extension_loaded('digium_register')) {
 	$page = (isset($_GET['page'])) ? $_GET['page'] : 'default';
 	$digium_addons = new digium_addons();
 	$error_msg = '';

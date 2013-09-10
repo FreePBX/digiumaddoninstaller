@@ -24,7 +24,7 @@ global $db;
 global $amp_conf;
 global $asterisk_conf;
 
-if(!function_exists('dl')) {
+if(!extension_loaded('digium_register') && !function_exists('dl')) {
 	echo 'This Module Requires The Digium RPM to be installed (php-digium_register-3.0.5-1_centos6.i686.rpm). Please see this page for more information: <a target="_blank" href="http://wiki.freepbx.org/display/F2/Digium+Addons">http://wiki.freepbx.org/display/F2/Digium+Addons</a>';
 	return false;
 }

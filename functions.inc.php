@@ -17,8 +17,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-if(function_exists('dl')) {
-	include ('modules/digiumaddoninstaller/libdregister/digium_register.php');
+// Try to load our extension if it's not already loaded.
+if(!extension_loaded('digium_register') && function_exists('dl')) {
+	if (strtolower(substr(PHP_OS, 0, 3)) === 'win') {
+		if (!dl('php_digium_register.dll')) return;
+	} else {
+		// PHP_SHLIB_SUFFIX gives 'dylib' on MacOS X but modules are 'so'.
+		if (PHP_SHLIB_SUFFIX === 'dylib') {
+			if (!dl('digium_register.so')) return;
+		} else {
+			if (!dl('digium_register.'.PHP_SHLIB_SUFFIX)) return;
+		}
+	}
+}
+
+if (extension_loaded('digium_register')) {
+	require_once(dirname(__FILE__).'/libdregister/digium_register.php');
 
 	global $db;
 
@@ -105,7 +119,7 @@ if(function_exists('dl')) {
 				if (DB::IsError($result)) {
 					die_freepbx($result->getDebugInfo());
 				}
-			
+		
 				if (sizeof($result) < 1) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads (id, name, package, tarball, path, available_version) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
 					mysql_real_escape_string($dl['name']), 
@@ -192,7 +206,7 @@ if(function_exists('dl')) {
 				die_freepbx($result->getDebugInfo());
 				return false;
 			}
-		
+	
 			`touch /tmp/{$addon}-backup.csv`;
 
 			$files = array();
@@ -418,7 +432,7 @@ if(function_exists('dl')) {
 				die_freepbx($results->getDebugInfo());
 				return false;
 			}
-		
+	
 			foreach ($results as $row) {
 				$this->addons[$row['id']] = $row;
 
