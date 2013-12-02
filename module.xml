@@ -27,4 +27,4 @@
 	</menuitems>
 	<location>release/2.11/digiumaddoninstaller-2.11.0.2.tgz</location>
 	<md5sum>079faca5f1c2d5a9be91c34cf23a443e</md5sum>
-</module>
+<supported><version>2.11</version></supported></module>
