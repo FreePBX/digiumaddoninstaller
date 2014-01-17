@@ -26,6 +26,9 @@
 	<menuitems>
 		<digiumaddons needsenginedb="yes" sort="-4">Digium Addons</digiumaddons>
 	</menuitems>
+	<supported>
+		<version>2.11</version>
+	</supported>
 	<location>release/2.11/digiumaddoninstaller-2.11.0.3.tgz</location>
 	<md5sum>2e8aca503e60bea3368a19a86033de9d</md5sum>
 </module>
