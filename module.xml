@@ -4,12 +4,13 @@
 	<type>setup</type>
 	<category>Admin</category>
 	<name>Digium Addons</name>
-	<version>2.11.0.3</version>
+	<version>2.11.0.4</version>
 	<publisher>Digium</publisher>
 	<license>GPLv2</license>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<changelog>
+		*2.11.0.4* Database abstraction fixes
 		*2.11.0.3* Check if the extension has been loaded manually. That way we don't need dl()
 		*2.11.0.2* Prevent page crashes if dl() doesn't exist.
 		*2.11.0.1* FreePBX/Schmoozecom Release

@@ -31,6 +31,7 @@ if(!extension_loaded('digium_register') && function_exists('dl')) {
 		}
 	}
 }
+global $db;
 if (extension_loaded('digium_register')) {
 	$page = (isset($_GET['page'])) ? $_GET['page'] : 'default';
 	$digium_addons = new digium_addons();
@@ -39,34 +40,34 @@ if (extension_loaded('digium_register')) {
 	if ($_GET['page'] == 'install') {
 		$page = 'default';
 
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$addon = $digium_addons->get_addon($id);
 
 		$digium_addons->install($id);
 	} else if ($_GET['page'] == 'update') {
 		$page = 'default';
 
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$addon = $digium_addons->get_addon($id);
 
 		$digium_addons->update($id);
 	} else if ($_GET['page'] == 'uninstall') {
 		$page = 'default';
 
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$addon = $digium_addons->get_addon($id);
 
 		$digium_addons->uninstall($id);
 	} else if (isset($_POST['add_license_submit']) && $_POST['add_license_submit']) {
 		$page = 'eula-form';
 
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$addon = $digium_addons->get_addon($id);
 		$digium_addons->register_load_product($addon['product_index']);
 		$product = $digium_addons->register_get_product();
 		$prefix = $digium_addons->register_get_key_prefix();
 
-		$product_key = mysql_real_escape_string($_POST['add_license_key']);
+		$product_key = $db->escapeSimple($_POST['add_license_key']);
 		if ( !$product_key || (strpos($product_key, $prefix) !== 0)) {
 			$key_error_msg = "Invalid key.";
 			$page = "add-license-form";
@@ -79,17 +80,17 @@ if (extension_loaded('digium_register')) {
 				$page = 'add-license-form';
 			}
 
-			$submitted_ufs[$uf['name']] = mysql_real_escape_string($_POST['add_license_'.$uf['name']]);
+			$submitted_ufs[$uf['name']] = $db->escapeSimple($_POST['add_license_'.$uf['name']]);
 		}
 	} else if (isset($_POST['eula-submit']) && $_POST['eula-submit']) {
 		$page = 'default';
 
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$addon = $digium_addons->get_addon($id);
 		$digium_addons->register_load_product($addon['product_index']);
 		$product = $digium_addons->register_get_product();
 
-		$product_key = mysql_real_escape_string($_POST['add_license_key']);
+		$product_key = $db->escapeSimple($_POST['add_license_key']);
 		if ( !$product_key ) {
 			$key_error_msg = "Invalid key.";
 			$page = "add-license-form";
@@ -102,7 +103,7 @@ if (extension_loaded('digium_register')) {
 			}
 
 			if (isset($_POST['add_license_'.$uf['name']])) {
-				$submitted_ufs[$uf['name']] = mysql_real_escape_string($_POST['add_license_'.$uf['name']]);
+				$submitted_ufs[$uf['name']] = $db->escapeSimple($_POST['add_license_'.$uf['name']]);
 			} else {
 				$submitted_ufs[$uf['name']] = null;
 			}
@@ -117,7 +118,7 @@ if (extension_loaded('digium_register')) {
 			$page = 'eula-form';
 		}
 	} else if ($_GET['page'] == 'delete') {
-		$id = mysql_real_escape_string($_GET['addon']);
+		$id = $db->escapeSimple($_GET['addon']);
 		$digium_addons->uninstall($id);
 		$page='default';
 	} else if ($_GET['page'] == 'backup') {
@@ -145,7 +146,7 @@ if (extension_loaded('digium_register')) {
 	// Time to detemine what page to display
 	switch ($page) {
 		case 'add-license-form':
-			$id = mysql_real_escape_string($_GET['addon']);
+			$id = $db->escapeSimple($_GET['addon']);
 			$addon = $digium_addons->get_addon($id);
 			$digium_addons->register_load_product($addon['product_index']);
 			$product = $digium_addons->register_get_product();
@@ -155,7 +156,7 @@ if (extension_loaded('digium_register')) {
 			include('modules/digiumaddoninstaller/views/backup.php');
 			break;
 		case 'eula-form':
-			$id = mysql_real_escape_string($_GET['addon']);
+			$id = $db->escapeSimple($_GET['addon']);
 			$addon = $digium_addons->get_addon($id);
 			$digium_addons->register_load_product($addon['product_index']);
 			$product = $digium_addons->register_get_product();

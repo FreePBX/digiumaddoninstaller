@@ -102,19 +102,19 @@ if (extension_loaded('digium_register')) {
 			$sql = array();
 
 			$sql[] = sprintf("INSERT INTO digiumaddoninstaller_addons (id, name, description, documentation, link, product_index, category_index, register_limit, supported_version, is_installed, is_registered) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, \"%s\", false, false)", 
-				mysql_real_escape_string($name), 
-				mysql_real_escape_string($data['name']), 
-				mysql_real_escape_string($data['description']), 
-				mysql_real_escape_string($data['documentation']),
-				mysql_real_escape_string($data['link']),
-				mysql_real_escape_string($data['product_index']),
-				mysql_real_escape_string($data['category_index']),
-				mysql_real_escape_string($data['register_limit']),
-				mysql_real_escape_string($data['supported_version'])
+				$db->escapeSimple($name), 
+				$db->escapeSimple($data['name']), 
+				$db->escapeSimple($data['description']), 
+				$db->escapeSimple($data['documentation']),
+				$db->escapeSimple($data['link']),
+				$db->escapeSimple($data['product_index']),
+				$db->escapeSimple($data['category_index']),
+				$db->escapeSimple($data['register_limit']),
+				$db->escapeSimple($data['supported_version'])
 			);
 
 			foreach ($data['downloads'] as $dl) {
-				$testsql = sprintf("SELECT id FROM digiumaddoninstaller_downloads WHERE id=\"%s\";", mysql_real_escape_string($dl['name']));
+				$testsql = sprintf("SELECT id FROM digiumaddoninstaller_downloads WHERE id=\"%s\";", $db->escapeSimple($dl['name']));
 				$result = $db->getAll($testsql);
 				if (DB::IsError($result)) {
 					die_freepbx($result->getDebugInfo());
@@ -122,31 +122,31 @@ if (extension_loaded('digium_register')) {
 		
 				if (sizeof($result) < 1) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads (id, name, package, tarball, path, available_version) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
-					mysql_real_escape_string($dl['name']), 
-					mysql_real_escape_string($dl['name']), 
-					mysql_real_escape_string($dl['package']), 
-					mysql_real_escape_string($dl['tarball']), 
-					mysql_real_escape_string($dl['path']),
-					mysql_real_escape_string($dl['version'])
+					$db->escapeSimple($dl['name']), 
+					$db->escapeSimple($dl['name']), 
+					$db->escapeSimple($dl['package']), 
+					$db->escapeSimple($dl['tarball']), 
+					$db->escapeSimple($dl['path']),
+					$db->escapeSimple($dl['version'])
 					);
 				}
 
 				$sql[] = sprintf("INSERT INTO digiumaddoninstaller_addons_downloads (addon_id, download_id) VALUES (\"%s\", \"%s\")",
-					mysql_real_escape_string($name), 
-					mysql_real_escape_string($dl['name'])
+					$db->escapeSimple($name), 
+					$db->escapeSimple($dl['name'])
 				);
 
 				foreach ($dl['bits'] as $bit) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_bits (download_id, bit) VALUES (\"%s\", \"%s\")",
-						mysql_real_escape_string($dl['name']), 
-						mysql_real_escape_string($bit)
+						$db->escapeSimple($dl['name']), 
+						$db->escapeSimple($bit)
 					);
 				}
 
 				foreach ($dl['ast_versions'] as $ast_ver) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_ast_versions (download_id, ast_version) VALUES (\"%s\", \"%s\")",
-						mysql_real_escape_string($dl['name']), 
-						mysql_real_escape_string($ast_ver)
+						$db->escapeSimple($dl['name']), 
+						$db->escapeSimple($ast_ver)
 					);
 				}
 			}
@@ -199,7 +199,7 @@ if (extension_loaded('digium_register')) {
 			global $db;
 
 			//get all addon registers from db
-			$sql = sprintf("SELECT * FROM digiumaddoninstaller_registers WHERE addon_id = \"%s\"", mysql_real_escape_string($addon));
+			$sql = sprintf("SELECT * FROM digiumaddoninstaller_registers WHERE addon_id = \"%s\"", $db->escapeSimple($addon));
 
 			$result = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 			if (DB::IsError($result)) {
@@ -276,7 +276,7 @@ if (extension_loaded('digium_register')) {
 				foreach ($addon['downloads'] as $dl) {
 					//get current version from database
 					$sql = sprintf("SELECT available_version, installed_version FROM digiumaddoninstaller_downloads WHERE `id`=\"%s\" LIMIT 1",
-						mysql_real_escape_string($dl->name)
+						$db->escapeSimple($dl->name)
 					);
 
 					$result = $db->getAll($sql, DB_FETCHMODE_ASSOC);
@@ -293,29 +293,29 @@ if (extension_loaded('digium_register')) {
 						//update vars for dl
 						$sql = array();
 
-						$sql[] = sprintf("UPDATE digiumaddoninstaller_addons SET is_uptodate=false WHERE id=\"%s\"", mysql_real_escape_string($addon['name']));
+						$sql[] = sprintf("UPDATE digiumaddoninstaller_addons SET is_uptodate=false WHERE id=\"%s\"", $db->escapeSimple($addon['name']));
 
 						$sql[] = sprintf("UPDATE digiumaddoninstaller_downloads SET package=\"%s\", tarball=\"%s\", path=\"%s\", available_version=\"%s\" WHERE name=\"%s\" LIMIT 1",
-							mysql_real_escape_string($dl->package),
-							mysql_real_escape_string($dl->tarball),
-							mysql_real_escape_string($dl->path),
-							mysql_real_escape_string($dl->version),
-							mysql_real_escape_string($dl->name)
+							$db->escapeSimple($dl->package),
+							$db->escapeSimple($dl->tarball),
+							$db->escapeSimple($dl->path),
+							$db->escapeSimple($dl->version),
+							$db->escapeSimple($dl->name)
 						);
 
-						$sql[] = "DELETE FROM digiumaddoninstaller_downloads_bits WHERE download_id=\"".mysql_real_escape_string($dl->name)."\"";
+						$sql[] = "DELETE FROM digiumaddoninstaller_downloads_bits WHERE download_id=\"".$db->escapeSimple($dl->name)."\"";
 						foreach ($dl->bits as $bit) {
 							$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_bits (download_id, bit) VALUES (\"%s\", \"%s\")",
-								mysql_real_escape_string($dl->name),
-								mysql_real_escape_string($bit)
+								$db->escapeSimple($dl->name),
+								$db->escapeSimple($bit)
 							);
 						}
 
-						$sql[] = "DELETE FROM digiumaddoninstaller_downloads_ast_versions WHERE download_id=\"".mysql_real_escape_string($dl->name)."\"";
+						$sql[] = "DELETE FROM digiumaddoninstaller_downloads_ast_versions WHERE download_id=\"".$db->escapeSimple($dl->name)."\"";
 						foreach ($dl->ast_versions as $astver) {
 							$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_ast_versions (download_id, ast_version) VALUES (\"%s\", \"%s\")",
-								mysql_real_escape_string($dl->name),
-								mysql_real_escape_string($astver)
+								$db->escapeSimple($dl->name),
+								$db->escapeSimple($astver)
 							);
 						}
 
@@ -388,7 +388,7 @@ if (extension_loaded('digium_register')) {
 
 					$retval = `sudo yum install -y $pkg_name`;
 
-					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", mysql_real_escape_string($dl['available_version']), mysql_real_escape_string($dl['name']));
+					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", $db->escapeSimple($dl['available_version']), $db->escapeSimple($dl['name']));
 
 					$results = $db->query($sql);
 					if (DB::IsError($results)) {
@@ -402,7 +402,7 @@ if (extension_loaded('digium_register')) {
 				}
 			}
 
-			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_installed=true, is_uptodate=true WHERE id=\"%s\"", mysql_real_escape_string($id));
+			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_installed=true, is_uptodate=true WHERE id=\"%s\"", $db->escapeSimple($id));
 
 			$results = $db->query($sql);
 			if (DB::IsError($results)) {
@@ -436,7 +436,7 @@ if (extension_loaded('digium_register')) {
 			foreach ($results as $row) {
 				$this->addons[$row['id']] = $row;
 
-				$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads INNER JOIN digiumaddoninstaller_addons_downloads WHERE digiumaddoninstaller_addons_downloads.download_id = digiumaddoninstaller_downloads.id AND digiumaddoninstaller_addons_downloads.addon_id=\"%s\"", mysql_real_escape_string($row['id']));
+				$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads INNER JOIN digiumaddoninstaller_addons_downloads WHERE digiumaddoninstaller_addons_downloads.download_id = digiumaddoninstaller_downloads.id AND digiumaddoninstaller_addons_downloads.addon_id=\"%s\"", $db->escapeSimple($row['id']));
 
 				$dls = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 				if (DB::IsError($dls)) {
@@ -446,7 +446,7 @@ if (extension_loaded('digium_register')) {
 
 				$this->addons[$row['id']]['downloads'] = array();
 				foreach ($dls as $dl) {
-					$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads_bits WHERE download_id=\"%s\"", mysql_real_escape_string($dl['id']));
+					$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads_bits WHERE download_id=\"%s\"", $db->escapeSimple($dl['id']));
 
 					$bits = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 					if (DB::IsError($bits)) {
@@ -459,7 +459,7 @@ if (extension_loaded('digium_register')) {
 						$dl['bits'][] = $bit;
 					}
 
-					$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads_ast_versions WHERE download_id=\"%s\"", mysql_real_escape_string($dl['id']));
+					$sql = sprintf("SELECT * FROM digiumaddoninstaller_downloads_ast_versions WHERE download_id=\"%s\"", $db->escapeSimple($dl['id']));
 
 					$astvers = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 					if (DB::IsError($astvers)) {
@@ -477,7 +477,7 @@ if (extension_loaded('digium_register')) {
 
 				$this->addons[$row['id']]['registers'] = array();
 
-				$sql = sprintf("SELECT * FROM digiumaddoninstaller_registers WHERE addon_id=\"%s\"", mysql_real_escape_string($row['id']));
+				$sql = sprintf("SELECT * FROM digiumaddoninstaller_registers WHERE addon_id=\"%s\"", $db->escapeSimple($row['id']));
 
 				$regs = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 				if (DB::IsError($regs)) {
@@ -521,7 +521,7 @@ if (extension_loaded('digium_register')) {
 				return $retval;
 			}
 
-			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_registered=true WHERE id=\"%s\"", mysql_real_escape_string($id));
+			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_registered=true WHERE id=\"%s\"", $db->escapeSimple($id));
 
 			$result = $db->query($sql);
 			if (DB::IsError($result)) {
@@ -574,7 +574,7 @@ if (extension_loaded('digium_register')) {
 
 					$retval = `sudo yum erase -y $pkg_name`;
 
-					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version='' WHERE id=\"%s\"", mysql_real_escape_string($dl['name']));
+					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version='' WHERE id=\"%s\"", $db->escapeSimple($dl['name']));
 
 					$results = $db->query($sql);
 					if (DB::IsError($results)) {
@@ -588,7 +588,7 @@ if (extension_loaded('digium_register')) {
 				}
 			}
 
-			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_installed=false, is_uptodate=false WHERE id=\"%s\"", mysql_real_escape_string($id));
+			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_installed=false, is_uptodate=false WHERE id=\"%s\"", $db->escapeSimple($id));
 
 			$results = $db->query($sql);
 			if (DB::IsError($results)) {
@@ -611,7 +611,7 @@ if (extension_loaded('digium_register')) {
 
 					$retval = `sudo yum update -y $pkg_name`;
 
-					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", mysql_real_escape_string($dl['available_version']), mysql_real_escape_string($dl['id']));
+					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", $db->escapeSimple($dl['available_version']), $db->escapeSimple($dl['id']));
 
 					$results = $db->query($sql);
 					if (DB::IsError($results)) {
@@ -625,7 +625,7 @@ if (extension_loaded('digium_register')) {
 				}
 			}
 
-			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_uptodate=true WHERE id=\"%s\"", mysql_real_escape_string($id));
+			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_uptodate=true WHERE id=\"%s\"", $db->escapeSimple($id));
 
 			$results = $db->query($sql);
 			if (DB::IsError($results)) {
@@ -806,10 +806,10 @@ if (extension_loaded('digium_register')) {
 				unset($fh);
 
 				$sql = sprintf("INSERT INTO digiumaddoninstaller_registers (addon_id, path, filename, data) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")",
-					mysql_real_escape_string($addon),
-					mysql_real_escape_string($this->licenses[$i]['path']),
-					mysql_real_escape_string($this->licenses[$i]['filename']),
-					mysql_real_escape_string($this->licenses[$i]['data'])
+					$db->escapeSimple($addon),
+					$db->escapeSimple($this->licenses[$i]['path']),
+					$db->escapeSimple($this->licenses[$i]['filename']),
+					$db->escapeSimple($this->licenses[$i]['data'])
 				);
 
 				$result = $db->query($sql);
