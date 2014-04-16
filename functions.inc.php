@@ -1,22 +1,9 @@
 <?php
-/**
- *
- * Copyright (c) 2009, Digium, Inc.
- *
- * Author: Ryan Brindley <ryan@digium.com>
- *
- * This program is free software, distributed under the terms of
- * the GNU General Public License Version 2. 
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- */
+//	License for all code of this FreePBX module can be found in the license file inside the module directory
+//	Copyright 2013 Schmooze Com Inc.
+//  Copyright (c) 2009, Digium, Inc.
+//
+
 // Try to load our extension if it's not already loaded.
 if(!extension_loaded('digium_register') && function_exists('dl')) {
 	if (strtolower(substr(PHP_OS, 0, 3)) === 'win') {
