@@ -1,12 +1,21 @@
 <h3><?php echo $addon['name']?></h3>
 <p><?php echo $addon['description']?></p>
-<form name="add_license_form" method="post" action="config.php?type=setup&display=digiumaddons&page=add-license-form&addon=<?php echo $_GET['addon']?>">
+<?php
+// Avoid XSS
+$addon = htmlentities($_GET['addon'], ENT_QUOTES);
+$key = htmlentities($_POST['add_license_key'], ENT_QUOTES);
+$name = "add_license_".htmlentities($uf['name'], ENT_QUOTES);
+$aln = htmlentities($_POST[$name], ENT_QUOTES);
+?>
+
+
+<form name="add_license_form" method="post" action="config.php?type=setup&display=digiumaddons&page=add-license-form&addon=<?php echo $addon; ?>">
 <fieldset>
 <div class="error_msg"><?php echo $key_error_msg?></div>
 <legend> Key </legend>
 <div class="add_license_field">
 	<label for="add_license_key">Key: </label>
-	<input type="text" name="add_license_key" value="<?php echo $_POST['add_license_key']?>" />
+	<input type="text" name="add_license_key" value="<?php echo $key; ?>" />
 	*
 </div>
 
@@ -16,8 +25,8 @@
 <legend>User Fields</legend>
 <?php foreach ($product['userfields'] as $uf): ?>
 <div class="add_license_field">
-	<label for="add_license_<?php echo $uf['name']?>"><?php echo $uf['desc']?></label>
-	<input type="text" name="add_license_<?php echo $uf['name']?>" value="<?php echo $_POST['add_license_'.$uf['name']]?>" />
+	<label for="<?php echo $name; ?>"><?php echo $uf['desc']?></label>
+	<input type="text" name="<?php echo $name; ?>" value="<?php echo $aln; ?>" />
 	<?php echo (($uf['required'])?"*":"")?>
 </div>
 <?php endforeach; ?>

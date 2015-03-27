@@ -1,6 +1,11 @@
 <h3><?php echo $addon['name']?></h3>
 
-<form name="eula-form" method="post" action="config.php?type=setup&display=digiumaddons&page=eula-form&addon=<?php echo $_GET['addon']?>">
+<?php
+// Avoid XSS
+$addon = htmlentities($_GET['addon'], ENT_QUOTES);
+?>
+
+<form name="eula-form" method="post" action="config.php?type=setup&display=digiumaddons&page=eula-form&addon=<?php echo $addon ?>">
 	<input type="hidden" name="add_license_key" value="<?php echo $product_key?>" />
 	<?php foreach ($submitted_ufs as $name=>$val): ?>
 	<input type="hidden" name="add_license_<?php echo $name?>" value="<?php echo $val?>" />
