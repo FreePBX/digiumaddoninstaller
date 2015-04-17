@@ -4,7 +4,6 @@
 // Avoid XSS
 $addon = htmlentities($_GET['addon'], ENT_QUOTES);
 $key = htmlentities($_POST['add_license_key'], ENT_QUOTES);
-$name = "add_license_".htmlentities($uf['name'], ENT_QUOTES);
 $aln = htmlentities($_POST[$name], ENT_QUOTES);
 ?>
 
@@ -23,7 +22,9 @@ $aln = htmlentities($_POST[$name], ENT_QUOTES);
 <fieldset>
 <div class="error_msg"><?php echo $fields_error_msg?></div>
 <legend>User Fields</legend>
-<?php foreach ($product['userfields'] as $uf): ?>
+<?php foreach ($product['userfields'] as $uf): 
+	$name = "add_license_".htmlentities($uf['name'], ENT_QUOTES);
+?>
 <div class="add_license_field">
 	<label for="<?php echo $name; ?>"><?php echo $uf['desc']?></label>
 	<input type="text" name="<?php echo $name; ?>" value="<?php echo $aln; ?>" />

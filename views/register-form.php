@@ -3,7 +3,6 @@
 // Avoid XSS
 $addon = htmlentities($_GET['addon'], ENT_QUOTES);
 $regkey = htmlentities($_GET['register_key'], ENT_QUOTES);
-$regname = "register_".htmlentities($uf['name']);
 $val = htmlentities($_POST[$regname]);
 ?>
 <form name="register_form" method="post" action="config.php?type=setup&display=digiumaddons&page=register-form&addon=<?php echo $addon; ?>">
@@ -19,7 +18,9 @@ $val = htmlentities($_POST[$regname]);
 </fieldset>
 <fieldset>
 <legend>User Fields</legend>
-<?php foreach ($product['userfields'] as $uf): ?>
+<?php foreach ($product['userfields'] as $uf): 
+	$regname = "register_".htmlentities($uf['name']);
+?>
 <div class="register_field">
 	<label for="register_<?php echo $uf['name']?>"><?php echo $uf['desc']?></label>
 	<input type="text" name="<?php echo $regname; ?>" value="<?php echo $val; ?>" />
