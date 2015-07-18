@@ -5,17 +5,8 @@
 //
 
 // Try to load our extension if it's not already loaded.
-if(!extension_loaded('digium_register') && function_exists('dl')) {
-	if (strtolower(substr(PHP_OS, 0, 3)) === 'win') {
-		if (!dl('php_digium_register.dll')) return;
-	} else {
-		// PHP_SHLIB_SUFFIX gives 'dylib' on MacOS X but modules are 'so'.
-		if (PHP_SHLIB_SUFFIX === 'dylib') {
-			if (!dl('digium_register.so')) return;
-		} else {
-			if (!dl('digium_register.'.PHP_SHLIB_SUFFIX)) return;
-		}
-	}
+if(!extension_loaded('digium_register')) {
+	return;
 }
 
 if (extension_loaded('digium_register')) {
@@ -84,14 +75,14 @@ if (extension_loaded('digium_register')) {
 		 * Add an addon to the database
 		 */
 		public function add_addon($name, $data) {
-			global $db; 
+			global $db;
 
 			$sql = array();
 
-			$sql[] = sprintf("INSERT INTO digiumaddoninstaller_addons (id, name, description, documentation, link, product_index, category_index, register_limit, supported_version, is_installed, is_registered) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, \"%s\", false, false)", 
-				$db->escapeSimple($name), 
-				$db->escapeSimple($data['name']), 
-				$db->escapeSimple($data['description']), 
+			$sql[] = sprintf("INSERT INTO digiumaddoninstaller_addons (id, name, description, documentation, link, product_index, category_index, register_limit, supported_version, is_installed, is_registered) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, \"%s\", false, false)",
+				$db->escapeSimple($name),
+				$db->escapeSimple($data['name']),
+				$db->escapeSimple($data['description']),
 				$db->escapeSimple($data['documentation']),
 				$db->escapeSimple($data['link']),
 				$db->escapeSimple($data['product_index']),
@@ -106,33 +97,33 @@ if (extension_loaded('digium_register')) {
 				if (DB::IsError($result)) {
 					die_freepbx($result->getDebugInfo());
 				}
-		
+
 				if (sizeof($result) < 1) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads (id, name, package, tarball, path, available_version) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
-					$db->escapeSimple($dl['name']), 
-					$db->escapeSimple($dl['name']), 
-					$db->escapeSimple($dl['package']), 
-					$db->escapeSimple($dl['tarball']), 
+					$db->escapeSimple($dl['name']),
+					$db->escapeSimple($dl['name']),
+					$db->escapeSimple($dl['package']),
+					$db->escapeSimple($dl['tarball']),
 					$db->escapeSimple($dl['path']),
 					$db->escapeSimple($dl['version'])
 					);
 				}
 
 				$sql[] = sprintf("INSERT INTO digiumaddoninstaller_addons_downloads (addon_id, download_id) VALUES (\"%s\", \"%s\")",
-					$db->escapeSimple($name), 
+					$db->escapeSimple($name),
 					$db->escapeSimple($dl['name'])
 				);
 
 				foreach ($dl['bits'] as $bit) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_bits (download_id, bit) VALUES (\"%s\", \"%s\")",
-						$db->escapeSimple($dl['name']), 
+						$db->escapeSimple($dl['name']),
 						$db->escapeSimple($bit)
 					);
 				}
 
 				foreach ($dl['ast_versions'] as $ast_ver) {
 					$sql[] = sprintf("INSERT INTO digiumaddoninstaller_downloads_ast_versions (download_id, ast_version) VALUES (\"%s\", \"%s\")",
-						$db->escapeSimple($dl['name']), 
+						$db->escapeSimple($dl['name']),
 						$db->escapeSimple($ast_ver)
 					);
 				}
@@ -180,7 +171,7 @@ if (extension_loaded('digium_register')) {
 		 * Backup
 		 *
 		 * Create a csv of all the licenses and their info so that
-		 * one day it could be put back into 
+		 * one day it could be put back into
 		 */
 		public function backup($addon) {
 			global $db;
@@ -193,7 +184,7 @@ if (extension_loaded('digium_register')) {
 				die_freepbx($result->getDebugInfo());
 				return false;
 			}
-	
+
 			`touch /tmp/{$addon}-backup.csv`;
 
 			$files = array();
@@ -240,7 +231,7 @@ if (extension_loaded('digium_register')) {
 		 * Pull the latest from the Digium server and check for any addon updates
 		 */
 		public function check_for_updates($addon=null) {
-			global $db; 
+			global $db;
 
 			if ($addon==null) {
 				$tobechecked = $this->pull_addons_list();
@@ -419,7 +410,7 @@ if (extension_loaded('digium_register')) {
 				die_freepbx($results->getDebugInfo());
 				return false;
 			}
-	
+
 			foreach ($results as $row) {
 				$this->addons[$row['id']] = $row;
 
