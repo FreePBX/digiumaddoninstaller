@@ -2,9 +2,9 @@
 <p><?php echo $addon['description']?></p>
 <?php
 // Avoid XSS
-$addon = htmlentities($_GET['addon'], ENT_QUOTES);
-$key = htmlentities($_POST['add_license_key'], ENT_QUOTES);
-$aln = htmlentities($_POST[$name], ENT_QUOTES);
+$addon = htmlentities($_GET['addon'], ENT_QUOTES, "UTF-8");
+$key = htmlentities($_POST['add_license_key'], ENT_QUOTES, "UTF-8");
+$aln = htmlentities($_POST[$name], ENT_QUOTES, "UTF-8");
 ?>
 
 
@@ -22,8 +22,8 @@ $aln = htmlentities($_POST[$name], ENT_QUOTES);
 <fieldset>
 <div class="error_msg"><?php echo $fields_error_msg?></div>
 <legend>User Fields</legend>
-<?php foreach ($product['userfields'] as $uf): 
-	$name = "add_license_".htmlentities($uf['name'], ENT_QUOTES);
+<?php foreach ($product['userfields'] as $uf):
+	$name = "add_license_".htmlentities($uf['name'], ENT_QUOTES, "UTF-8");
 ?>
 <div class="add_license_field">
 	<label for="<?php echo $name; ?>"><?php echo $uf['desc']?></label>

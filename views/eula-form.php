@@ -2,7 +2,7 @@
 
 <?php
 // Avoid XSS
-$addon = htmlentities($_GET['addon'], ENT_QUOTES);
+$addon = htmlentities($_GET['addon'], ENT_QUOTES, "UTF-8");
 ?>
 
 <form name="eula-form" method="post" action="config.php?type=setup&display=digiumaddons&page=eula-form&addon=<?php echo $addon ?>">

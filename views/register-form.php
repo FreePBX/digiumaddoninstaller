@@ -1,9 +1,9 @@
 <h3><?php echo $addon['name']?></h3>
 <?php
 // Avoid XSS
-$addon = htmlentities($_GET['addon'], ENT_QUOTES);
-$regkey = htmlentities($_GET['register_key'], ENT_QUOTES);
-$val = htmlentities($_POST[$regname]);
+$addon = htmlentities($_GET['addon'], ENT_QUOTES, "UTF-8");
+$regkey = htmlentities($_GET['register_key'], ENT_QUOTES, "UTF-8");
+$val = htmlentities($_POST[$regname],ENT_COMPAT | ENT_HTML401, "UTF-8");
 ?>
 <form name="register_form" method="post" action="config.php?type=setup&display=digiumaddons&page=register-form&addon=<?php echo $addon; ?>">
 <fieldset>
@@ -18,7 +18,7 @@ $val = htmlentities($_POST[$regname]);
 </fieldset>
 <fieldset>
 <legend>User Fields</legend>
-<?php foreach ($product['userfields'] as $uf): 
+<?php foreach ($product['userfields'] as $uf):
 	$regname = "register_".htmlentities($uf['name']);
 ?>
 <div class="register_field">
