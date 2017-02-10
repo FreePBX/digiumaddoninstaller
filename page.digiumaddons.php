@@ -18,28 +18,7 @@ if (extension_loaded('digium_register')) {
 	$digium_addons = new digium_addons();
 	$error_msg = '';
 
-	if ($_GET['page'] == 'install') {
-		$page = 'default';
-
-		$id = $db->escapeSimple($_GET['addon']);
-		$addon = $digium_addons->get_addon($id);
-
-		$digium_addons->install($id);
-	} else if ($_GET['page'] == 'update') {
-		$page = 'default';
-
-		$id = $db->escapeSimple($_GET['addon']);
-		$addon = $digium_addons->get_addon($id);
-
-		$digium_addons->update($id);
-	} else if ($_GET['page'] == 'uninstall') {
-		$page = 'default';
-
-		$id = $db->escapeSimple($_GET['addon']);
-		$addon = $digium_addons->get_addon($id);
-
-		$digium_addons->uninstall($id);
-	} else if (isset($_POST['add_license_submit']) && $_POST['add_license_submit']) {
+	if (isset($_POST['add_license_submit']) && $_POST['add_license_submit']) {
 		$page = 'eula-form';
 
 		$id = $db->escapeSimple($_GET['addon']);
@@ -109,7 +88,7 @@ if (extension_loaded('digium_register')) {
 
 	?>
 	<style type="text/css">
-		#digium_addons th, #digium_addons td { padding: 1px; text-align: center; }
+		#digium_addons th, #digium_addons td { padding: 6px; text-align: center; }
 		#digium_addons > tbody > tr:hover { background: #fde9d1; }
 		#digium_addons th { background: #7aa8f9; }
 		#digium_addons td { font-size: 12px; }

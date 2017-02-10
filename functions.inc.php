@@ -52,8 +52,6 @@ if (extension_loaded('digium_register')) {
 		private $bit = '';			// The server's bit
 		private $downloads_addons_url = 'http://downloads.digium.com/pub/telephony/addons.json';
 		private $hasinited = false;		// Has the module been initialized
-		private $hasyum = true;			// Do we have yum installed?
-		private $hasyumaccess = true;		// Do we have access to yum?
 		private $module_version = '0.1';	// Version of the Digium Addons Module
 		private $register = null;		// The digiumaddons_register object
 
@@ -167,6 +165,51 @@ if (extension_loaded('digium_register')) {
 			}
 		}
 
+		/* check if module is loaded */
+		public function module_loaded($module) {
+			global $astman;
+
+			$result = $astman->send_request('ModuleCheck', array('Module'=>$module));
+
+			if (empty($result['Response'])) {
+				return false;
+			}
+			if ($result['Response'] == 'Success') {
+				return true;
+			}
+			return false;
+		}
+
+		/* check if module for addon is installed */
+		public function addon_module_installed($addon) {
+			foreach ($addon['downloads'] as $dl) {
+				if ($this->module_loaded($dl['name'])) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/* check if module thinks it's installed */
+		public function addon_state_installed($id) {
+			// use the value loaded from DB, not from json
+			$addon = $this->addons[$id];
+			return $addon['is_installed'];
+		}
+
+		/* update the installed state for the addon */
+		public function update_installed($id, $addon) {
+			if ($this->addon_module_installed($addon)) {
+				if (!$this->addon_state_installed($id)) {
+					$this->install($id);
+				}
+			} else {
+				if ($this->addon_state_installed($id)) {
+					$this->uninstall($id);
+				}
+			}
+		}
+
 		/**
 		 * Backup
 		 *
@@ -209,23 +252,6 @@ if (extension_loaded('digium_register')) {
 		}
 
 		/**
-		 * Build Package Name
-		 *
-		 * Take a download and build what would be the yum package
-		 */
-		public function build_pkg_name($dl) {
-			$pkg_format = $dl['package'];
-			$name = $dl['name'];
-
-			$ast = 'asterisk';
-
-			$pkg_name = str_replace('{ast}', $ast, $pkg_format);
-			$pkg_name = str_replace('{name}', $name, $pkg_name);
-
-			return $pkg_name;
-		}
-
-		/**
 		 * Check For Updates
 		 *
 		 * Pull the latest from the Digium server and check for any addon updates
@@ -243,13 +269,22 @@ if (extension_loaded('digium_register')) {
 				//pull info from downloads server
 				$addon = $this->pull_addon($add);
 
+				// hack to pass installation value from json to db copy of addons
+				// without bothering to add field to mysql
+				if (!empty($addon['installation'])) {
+					$this->addons[$name]['installation'] = $addon['installation'];
+				}
+
 				//check if addon exists in db, add if not
 				if ( ! $this->addon_exists($name)) {
 					$this->add_addon($name, $addon);
+					$this->update_installed($name, $addon);
 					continue;
 				}
 
 				$db_add = $this->addons[$name];
+
+
 				//check if the addon's downloads have any updates
 				foreach ($addon['downloads'] as $dl) {
 					//get current version from database
@@ -308,6 +343,7 @@ if (extension_loaded('digium_register')) {
 						$this->load_addons();
 					}
 				}
+				$this->update_installed($name, $addon);
 			}
 		}
 
@@ -326,17 +362,6 @@ if (extension_loaded('digium_register')) {
 				$this->ast_version = '';
 			}
 			return $this->ast_version;	// something like "1.6.1.5"
-		}
-
-		/**
-		 *
-		 */
-		public function get_addon($id) {
-			if ( ! isset($this->addons[$id])) {
-				return false;
-			}
-
-			return $this->addons[$id];
 		}
 
 		/**
@@ -361,11 +386,7 @@ if (extension_loaded('digium_register')) {
 			foreach ($addon['downloads'] as $dl) {
 				if ($dl['available_version'] == $dl['installed_version']) {
 					continue;
-				} else if ($this->hasyum && $this->hasyumaccess) {
-					$pkg_name = $this->build_pkg_name($dl);
-
-					$retval = `sudo yum install -y $pkg_name`;
-
+				} else {
 					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", $db->escapeSimple($dl['available_version']), $db->escapeSimple($dl['name']));
 
 					$results = $db->query($sql);
@@ -375,8 +396,6 @@ if (extension_loaded('digium_register')) {
 					}
 
 					$dl['installed_version'] = $dl['available_version'];
-				} else {
-					//not yet implemented
 				}
 			}
 
@@ -547,11 +566,7 @@ if (extension_loaded('digium_register')) {
 			foreach ($addon['downloads'] as $dl) {
 				if ($dl['installed_version'] == '') {
 					continue;
-				} else if ($this->hasyum && $this->hasyumaccess) {
-					$pkg_name = $this->build_pkg_name($dl);
-
-					$retval = `sudo yum erase -y $pkg_name`;
-
+				} else {
 					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version='' WHERE id=\"%s\"", $db->escapeSimple($dl['name']));
 
 					$results = $db->query($sql);
@@ -561,8 +576,6 @@ if (extension_loaded('digium_register')) {
 					}
 
 					$dl['installed_version'] = '';
-				} else {
-					//not yet implemented
 				}
 			}
 
@@ -576,42 +589,6 @@ if (extension_loaded('digium_register')) {
 
 			$this->addons[$id]['is_uptodate'] = false;
 			$this->addons[$id]['is_installed'] = false;
-		}
-
-		public function update($id) {
-			global $db;
-
-			$addon = $this->addons[$id];
-
-			foreach ($addon['downloads'] as $dl) {
-				if ($this->hasyum && $this->hasyumaccess) {
-					$pkg_name = $this->build_pkg_name($dl);
-
-					$retval = `sudo yum update -y $pkg_name`;
-
-					$sql = sprintf("UPDATE digiumaddoninstaller_downloads SET installed_version=\"%s\" WHERE id=\"%s\"", $db->escapeSimple($dl['available_version']), $db->escapeSimple($dl['id']));
-
-					$results = $db->query($sql);
-					if (DB::IsError($results)) {
-						die_freepbx($results->getDebugInfo());
-						return false;
-					}
-
-					$dl['installed_version'] = $dl['available_version'];
-				} else {
-					//not yet implemented
-				}
-			}
-
-			$sql = sprintf("UPDATE digiumaddoninstaller_addons SET is_uptodate=true WHERE id=\"%s\"", $db->escapeSimple($id));
-
-			$results = $db->query($sql);
-			if (DB::IsError($results)) {
-				die_freepbx($results->getDebugInfo());
-				return false;
-			}
-
-			$this->addons[$id]['is_uptodate'] = true;
 		}
 	}
 

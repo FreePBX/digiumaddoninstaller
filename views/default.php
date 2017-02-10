@@ -3,9 +3,9 @@
 	<tr>
 		<th>Addon</th>
 		<th>Purchase</th>
-		<th>Installation</th>
+		<th>Installed</th>
 		<th>Registration</th>
-		<th>Backup</th>
+		<th>License Backup</th>
 		<th>Documentation</th>
 	</tr>
 </thead>
@@ -25,31 +25,31 @@
 				);
 			} else {
 				$actions['backup'] = array(
-					'NoBackup'=>'#'
+					'none'=>'#'
 				);
 			}
 
-			//case 'installed':
-			if ($addon['is_installed'] && $addon['is_uptodate']) {
+			if ($addon['is_installed']) {
 				$actions['install'] = array(
-					'Uninstall'=>'config.php?type=setup&display=digiumaddons&page=uninstall&addon='.$addon['id']
+					'Yes'=>'#'
 				);
-			//case 'update_available':
-			} else if ($addon['is_installed'] && !$addon['is_uptodate']) {
+			} else if (empty($addon['installation'])) {
 				$actions['install'] = array(
-					'Update'=>'config.php?type=setup&display=digiumaddons&page=update&addon='.$addon['id'],
-					'Uninstall'=>'config.php?type=setup&display=digiumaddons&page=uninstall&addon='.$addon['id']
+					'See Docs'=>$addon['documentation']
 				);
-			//case 'not_installed':
-			} else if ( ! $addon['is_installed']) {
+			} else {
 				$actions['install'] = array(
-					'Install'=>'config.php?type=setup&display=digiumaddons&page=install&addon='.$addon['id']
+					'Install'=>$addon['installation']
 				);
 			}
 
-			if ($addon['register_limit'] == 0  || count($addon['registers']) < $addon['register_limit']) {
+			if (count($addon['registers']) > 0) {
 				$actions['register'] = array(
-					'Add-License'=>'config.php?type=setup&display=digiumaddons&page=add-license-form&addon='.$addon['id']
+					'Add License'=>'config.php?type=setup&display=digiumaddons&page=add-license-form&addon='.$addon['id']
+				);
+			} else if ($addon['register_limit'] == 0 || count($addon['registers']) < $addon['register_limit']) {
+				$actions['register'] = array(
+					'Register'=>'config.php?type=setup&display=digiumaddons&page=add-license-form&addon='.$addon['id']
 				);
 			} else {
 				$actions['register'] = array(
@@ -61,10 +61,8 @@
 			foreach (array('install', 'register', 'backup') as $act) {
 				$act_output[$act] = array();
 				foreach ($actions[$act] as $txt=>$link) {
-					if ($txt == 'Maxed-Registrations') {
-						$act_output[$act][] = "Max Registrations";
-					} else if ($txt == 'NoBackup') {
-						$act_output[$act][] = "none";
+					if ($link == '#') {
+						$act_output[$act][] = $txt;
 					} else {
 						$act_output[$act][] = "<a href=\"{$link}\"><span>{$txt}</span></a>";
 					}
