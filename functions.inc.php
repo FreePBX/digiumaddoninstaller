@@ -89,7 +89,7 @@ if (extension_loaded('digium_register')) {
 				$db->escapeSimple($data['supported_version'])
 			);
 
-			foreach ($data['downloads'] as $dl) {
+			if (!empty($data['downloads'])) foreach ($data['downloads'] as $dl) {
 				$testsql = sprintf("SELECT id FROM digiumaddoninstaller_downloads WHERE id=\"%s\";", $db->escapeSimple($dl['name']));
 				$result = $db->getAll($testsql);
 				if (DB::IsError($result)) {
@@ -182,7 +182,7 @@ if (extension_loaded('digium_register')) {
 
 		/* check if module for addon is installed */
 		public function addon_module_installed($addon) {
-			foreach ($addon['downloads'] as $dl) {
+			if (!empty($addon['downloads'])) foreach ($addon['downloads'] as $dl) {
 				if ($this->module_loaded($dl['name'])) {
 					return true;
 				}
@@ -271,7 +271,7 @@ if (extension_loaded('digium_register')) {
 
 				// hack to pass installation value from json to db copy of addons
 				// without bothering to add field to mysql
-				if (!empty($addon['installation'])) {
+				if (!empty($addon['installation']) && !empty($this->addons[$name])) {
 					$this->addons[$name]['installation'] = $addon['installation'];
 				}
 
@@ -286,7 +286,7 @@ if (extension_loaded('digium_register')) {
 
 
 				//check if the addon's downloads have any updates
-				foreach ($addon['downloads'] as $dl) {
+				if (!empty($addon['downloads'])) foreach ($addon['downloads'] as $dl) {
 					//get current version from database
 					$sql = sprintf("SELECT available_version, installed_version FROM digiumaddoninstaller_downloads WHERE `id`=\"%s\" LIMIT 1",
 						$db->escapeSimple($dl->name)
@@ -364,6 +364,14 @@ if (extension_loaded('digium_register')) {
 			return $this->ast_version;	// something like "1.6.1.5"
 		}
 
+		public function get_addon($id) {
+			if ( ! isset($this->addons[$id])) {
+				return false;
+			}
+
+			return $this->addons[$id];
+		}
+
 		/**
 		 * Get Addons
 		 *
@@ -383,7 +391,7 @@ if (extension_loaded('digium_register')) {
 
 			$addon = $this->addons[$id];
 
-			foreach ($addon['downloads'] as $dl) {
+			if (!empty($addon['downloads'])) foreach ($addon['downloads'] as $dl) {
 				if ($dl['available_version'] == $dl['installed_version']) {
 					continue;
 				} else {
@@ -563,7 +571,7 @@ if (extension_loaded('digium_register')) {
 
 			$addon = $this->addons[$id];
 
-			foreach ($addon['downloads'] as $dl) {
+			if (!empty($addon['downloads'])) foreach ($addon['downloads'] as $dl) {
 				if ($dl['installed_version'] == '') {
 					continue;
 				} else {
