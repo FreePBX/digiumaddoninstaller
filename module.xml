@@ -4,27 +4,14 @@
 	<type>setup</type>
 	<category>Admin</category>
 	<name>Digium Addons</name>
-	<version>2.11.0.14</version>
+	<version>13.0.1</version>
 	<publisher>Digium</publisher>
 	<license>GPLv2</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
 	<changelog>
-		*2.11.0.14* FREEPBX-9055 track install status, offer instructions
-		*2.11.0.13* Remove en_US Translations
-		*2.11.0.12* FREEPBX-10209 htmlentities need to use UTF-8
-		*2.11.0.11* Remove DL functionality as it's not supported any longer in SAPIs
-		*2.11.0.10* FREEPBX-9093 fix regression in license form
-		*2.11.0.9* Request from DIGIUM
-		*2.11.0.7* FREEPBX-8990 fix XSS in digium addons
-		*2.11.0.6* Remove old depends
-		*2.11.0.5* Add license file
-		*2.11.0.4* Database abstraction fixes
-		*2.11.0.3* Check if the extension has been loaded manually. That way we don't need dl()
-		*2.11.0.2* Prevent page crashes if dl() doesn't exist.
-		*2.11.0.1* FreePBX/Schmoozecom Release
-		*0.1* initial commit
+		*13.0.1* Fork for release 13.0
 	</changelog>
 	<depends>
 		<version>2.8.0</version>
@@ -33,8 +20,6 @@
 		<digiumaddons needsenginedb="yes" sort="-4">Digium Addons</digiumaddons>
 	</menuitems>
 	<supported>
-		<version>2.11</version>
+		<version>13</version>
 	</supported>
-	<location>release/2.11/digiumaddoninstaller-2.11.0.3.tgz</location>
-	<md5sum>2e8aca503e60bea3368a19a86033de9d</md5sum>
 </module>
