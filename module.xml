@@ -4,7 +4,7 @@
 	<type>setup</type>
 	<category>Admin</category>
 	<name>Digium Addons</name>
-	<version>13.0.1</version>
+	<version>13.0.1.1</version>
 	<publisher>Digium</publisher>
 	<license>GPLv2</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
