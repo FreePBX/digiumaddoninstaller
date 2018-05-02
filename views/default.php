@@ -1,12 +1,12 @@
-<table class="taglist" id="digium_addons">
+<table class="table table0dtripedtaglist" id="digium_addons"         data-toggle="table">
 <thead>
 	<tr>
-		<th>Addon</th>
-		<th>Purchase</th>
-		<th>Installed</th>
-		<th>Registration</th>
-		<th>License Backup</th>
-		<th>Documentation</th>
+		<th><?php echo _("Addon")?></th>
+		<th><?php echo _("Purchase")?></th>
+		<th><?php echo _("Installed")?></th>
+		<th><?php echo _("Registration")?></th>
+		<th><?php echo _("License Backup")?></th>
+		<th><?php echo _("Documentation")?></th>
 	</tr>
 </thead>
 <tbody>
@@ -72,11 +72,11 @@
 
 			$output[] = "		<tr>
 				<td>{$addon['name']}</td>
-				<td><a href=\"{$addon['link']}\" target=\"_blank\">Purchase</a></td>
+				<td><a href=\"{$addon['link']}\" target=\"_blank\">"._("Purchase")."</a></td>
 				<td>{$act_output['install']}</td>
 				<td>{$act_output['register']}</td>
 				<td>{$act_output['backup']}</td>
-				<td><a href=\"{$addon['documentation']}\" target=\"_blank\">Documentation</a></td>
+				<td><a href=\"{$addon['documentation']}\" target=\"_blank\">"._("Documentation")."</a></td>
 			</tr>";
 		} 
 	}

@@ -93,7 +93,7 @@ if (extension_loaded('digium_register')) {
 				$testsql = sprintf("SELECT id FROM digiumaddoninstaller_downloads WHERE id=\"%s\";", $db->escapeSimple($dl['name']));
 				$result = $db->getAll($testsql);
 				if (DB::IsError($result)) {
-					die_freepbx($result->getDebugInfo());
+					throw new Exception($result->getDebugInfo());
 				}
 
 				if (sizeof($result) < 1) {
@@ -130,7 +130,7 @@ if (extension_loaded('digium_register')) {
 			foreach ($sql as $s) {
 				$result = $db->query($s);
 				if (DB::IsError($result)) {
-					die_freepbx($result->getDebugInfo());
+					throw new Exception($result->getDebugInfo());
 				}
 				unset($result);
 			}
@@ -224,7 +224,7 @@ if (extension_loaded('digium_register')) {
 
 			$result = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 			if (DB::IsError($result)) {
-				die_freepbx($result->getDebugInfo());
+				throw new Exception($result->getDebugInfo());
 				return false;
 			}
 
@@ -294,7 +294,7 @@ if (extension_loaded('digium_register')) {
 
 					$result = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 					if (DB::IsError($result)) {
-						die_freepbx($result->getDebugInfo());
+						throw new Exception($result->getDebugInfo());
 						return false;
 					}
 
@@ -335,7 +335,7 @@ if (extension_loaded('digium_register')) {
 						foreach ($sql as $s) {
 							$result = $db->query($s);
 							if (DB::IsError($result)) {
-								die_freepbx($result->getDebugInfo());
+								throw new Exception($result->getDebugInfo());
 								return false;
 							}
 						}
@@ -399,7 +399,7 @@ if (extension_loaded('digium_register')) {
 
 					$results = $db->query($sql);
 					if (DB::IsError($results)) {
-						die_freepbx($results->getDebugInfo());
+						throw new Exception($results->getDebugInfo());
 						return false;
 					}
 
@@ -411,7 +411,7 @@ if (extension_loaded('digium_register')) {
 
 			$results = $db->query($sql);
 			if (DB::IsError($results)) {
-				die_freepbx($results->getDebugInfo());
+				throw new Exception($results->getDebugInfo());
 				return false;
 			}
 
@@ -434,7 +434,7 @@ if (extension_loaded('digium_register')) {
 
 			$results = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 			if (DB::IsError($results)) {
-				die_freepbx($results->getDebugInfo());
+				throw new Exception($results->getDebugInfo());
 				return false;
 			}
 
@@ -445,7 +445,7 @@ if (extension_loaded('digium_register')) {
 
 				$dls = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 				if (DB::IsError($dls)) {
-					die_freepbx($dls->getDebugInfo());
+					throw new Exception($dls->getDebugInfo());
 					return false;
 				}
 
@@ -455,7 +455,7 @@ if (extension_loaded('digium_register')) {
 
 					$bits = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 					if (DB::IsError($bits)) {
-						die_freepbx($bits->getDebugInfo());
+						throw new Exception($bits->getDebugInfo());
 						return false;
 					}
 
@@ -468,7 +468,7 @@ if (extension_loaded('digium_register')) {
 
 					$astvers = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 					if (DB::IsError($astvers)) {
-						die_freepbx($astvers->getDebugInfo());
+						throw new Exception($astvers->getDebugInfo());
 						return false;
 					}
 
@@ -486,7 +486,7 @@ if (extension_loaded('digium_register')) {
 
 				$regs = $db->getAll($sql, DB_FETCHMODE_ASSOC);
 				if (DB::IsError($regs)) {
-					die_freepbx($dls->getDebugInfo());
+					throw new Exception($dls->getDebugInfo());
 					return false;
 				}
 
@@ -530,7 +530,7 @@ if (extension_loaded('digium_register')) {
 
 			$result = $db->query($sql);
 			if (DB::IsError($result)) {
-				die_freepbx($result->getDebugInfo());
+				throw new Exception($result->getDebugInfo());
 				return false;
 			}
 			needreload();
@@ -579,7 +579,7 @@ if (extension_loaded('digium_register')) {
 
 					$results = $db->query($sql);
 					if (DB::IsError($results)) {
-						die_freepbx($results->getDebugInfo());
+						throw new Exception($results->getDebugInfo());
 						return false;
 					}
 
@@ -591,7 +591,7 @@ if (extension_loaded('digium_register')) {
 
 			$results = $db->query($sql);
 			if (DB::IsError($results)) {
-				die_freepbx($results->getDebugInfo());
+				throw new Exception($results->getDebugInfo());
 				return false;
 			}
 
@@ -622,10 +622,10 @@ if (extension_loaded('digium_register')) {
 
 		public function check_key($key=null) {
 			if (!isset($key) && !isset($this->product_key)) {
-				die_freepbx('Key is cannot be null when checking');
+				throw new Exception('Key is cannot be null when checking');
 				return false;
 			} else if ( ! isset($this->product)) {
-				die_freepbx('Please load a product before attempting to check a key');
+				throw new Exception('Please load a product before attempting to check a key');
 			}
 
 			$this->product_key = $key;
@@ -639,10 +639,10 @@ if (extension_loaded('digium_register')) {
 
 		public function get_eula($key=null) {
 			if (!isset($key) && !isset($this->product_key)) {
-				die_freepbx('Key is cannot be null when obtaining a eula');
+				throw new Exception('Key is cannot be null when obtaining a eula');
 				return false;
 			} else if ( ! isset($this->product)) {
-				die_freepbx('Please load a product before attempting to get a eula');
+				throw new Exception('Please load a product before attempting to get a eula');
 			} else if (isset($this->product['eula'])) {
 				return $this->product['eula'];
 			}
@@ -664,7 +664,7 @@ if (extension_loaded('digium_register')) {
 
 		public function get_product() {
 			if ( ! isset($this->product)) {
-				die_freepbx('Please load the product before attempting to get it');
+				throw new Exception('Please load the product before attempting to get it');
 				return false;
 			}
 
@@ -673,7 +673,7 @@ if (extension_loaded('digium_register')) {
 
 		public function load_product($index) {
 			if ( ! is_numeric($index)) {
-				die_freepbx('Index not numeric when loading Digium Product');
+				throw new Exception('Index not numeric when loading Digium Product');
 				return false;
 			}
 
@@ -711,14 +711,14 @@ if (extension_loaded('digium_register')) {
 			if ($this->product_res == null && $this->product_index != null) {
 				$this->load_product($this->product_index);
 			} else if ($key == null && $this->product_key == null) {
-				die_freepbx('Please provide a key before attempting to register.');
+				throw new Exception('Please provide a key before attempting to register.');
 				return false;
 			} if ($key != null) {
 				$this->product_key = $key;
 			}
 
 			if ($this->product_res == null) {
-				die_freepbx('Please provide a product before attempting to register.');
+				throw new Exception('Please provide a product before attempting to register.');
 				return false;
 			}
 
@@ -754,13 +754,13 @@ if (extension_loaded('digium_register')) {
 
 				$status_code = trim(status_code_get($this->licenses[$i]['status']));
 				if ($status_code != '200' && $status_code != '210') {
-					die_freepbx('Product Registration Error: '.trim(status_code_get($this->licenses[$i]['status'])));
+					throw new Exception('Product Registration Error: '.trim(status_code_get($this->licenses[$i]['status'])));
 					return false;
 				}
 
 				$fh = fopen($this->licenses[$i]['path'] . '/' . $this->licenses[$i]['filename'], 'w');
 				if ( ! $fh) {
-					die_freepbx('Failed to open file for license. Do you have the right permissions?');
+					throw new Exception('Failed to open file for license. Do you have the right permissions?');
 					return false;
 				}
 
@@ -777,7 +777,7 @@ if (extension_loaded('digium_register')) {
 
 				$result = $db->query($sql);
 				if (DB::IsError($result)) {
-					die_freepbx($result->getDebugInfo());
+					throw new Exception($result->getDebugInfo());
 					return false;
 				}
 			}

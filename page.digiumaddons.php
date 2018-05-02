@@ -68,8 +68,11 @@ if (extension_loaded('digium_register')) {
 				$submitted_ufs[$uf['name']] = null;
 			}
 		}
-
-		$register_result = $digium_addons->register($id, $submitted_ufs, $product_key);
+		try{
+			$register_result = $digium_addons->register($id, $submitted_ufs, $product_key);
+		}catch(Exception $e){
+			$register_result = false;
+		}
 		if ($register_result == false && $digium_addons->register_get_error() == 'bad-key') {
 			$key_error_msg = "This is an invalid key.";
 			$page = 'add-license-form';
@@ -99,9 +102,11 @@ if (extension_loaded('digium_register')) {
 		pre { font-size: 10px; }
 	</style>
 
-	<h1>Digium Addons</h1>
-	<hr />
-
+<div class="container-fluid">
+	<h1><?php echo _('Digium Addons')?></h1>
+	<div class = "display full-border">
+		<div class="fpbx-container">
+			<div class="display full-border">
 	<?php
 	// Time to detemine what page to display
 	switch ($page) {
@@ -130,3 +135,9 @@ if (extension_loaded('digium_register')) {
 } else {
 	echo '<h1 style="color:red">This Module Requires The Digium RPM to be installed (php-digium_register-3.0.5-1_centos6.i686.rpm)</h1><br/>Please see this page for more information: <a target="_blank" href="http://wiki.freepbx.org/display/F2/Digium+Addons">http://wiki.freepbx.org/display/F2/Digium+Addons</a>';
 }
+?>
+</div>
+		</div>
+	</div>
+</div>
+
