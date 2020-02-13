@@ -60,7 +60,7 @@ if (extension_loaded('digium_register')) {
 		 *
 		 * Load all needed information to use this class
 		 */
-		public function digium_addons() {
+		public function __construct() {
 			$this->register = new digiumaddons_register();
 			$this->get_ast_version();
 			$this->load_addons();
