@@ -9,10 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-20 13:22-0600\n"
+"POT-Creation-Date: 2020-08-17 02:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -26,7 +27,7 @@ msgid "Admin"
 msgstr ""
 
 #: digiumaddoninstaller.i18n.php:4
-#: digiumaddoninstaller.i18n.php:8
+#: digiumaddoninstaller.i18n.php:10
 #: page.digiumaddons.php:106
 msgid "Digium Addons"
 msgstr ""
@@ -51,4 +52,8 @@ msgstr ""
 
 #: views/default.php:7
 msgid "Registration"
+msgstr ""
+
+#: digiumaddoninstaller.i18n.php:8
+msgid "This module allows you to add licensed features from Digium"
 msgstr ""
