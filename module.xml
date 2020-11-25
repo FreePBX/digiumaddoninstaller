@@ -4,15 +4,16 @@
 	<type>setup</type>
 	<category>Admin</category>
 	<name>Digium Addons</name>
-	<version>13.0.1.3</version>
+	<version>13.0.1.4</version>
 	<publisher>Digium</publisher>
 	<license>GPLv2</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<candisable>yes</candisable>
 	<canuninstall>yes</canuninstall>
   	<description>This module allows you to add licensed features from Digium</description>
-  	<more-info>https://wiki.freepbx.org/display/F2/Digium+Addons</more-info>
+  	<more-info>https://wiki.freepbx.org/display/FPG/Digium+Addons</more-info>
 	<changelog>
+		*13.0.1.4* Packaging of ver 13.0.1.4
 		*13.0.1.3* Packaging of ver 13.0.1.3
 		*13.0.1.2* Fix PHP 7.x compatibility 
 		*13.0.1* Fork for release 13.0
